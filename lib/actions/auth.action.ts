@@ -80,16 +80,16 @@ export async function getCurrentUser(): Promise<User | null> {
     if (!sessionCookie) {
         return null;
     }
-    try{
-        const decodedClaims = await auth.verifySessionCookie(sessionCookie,true);
+    try {
+        const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
         const userRecord = await db.collection('users').doc(decodedClaims.uid).get();
-        if(!userRecord.exists){
+        if (!userRecord.exists) {
             return null;
         }
         return {
             ...userRecord.data(),
             id: userRecord.id,
-        } as User;    
+        } as User;
     }
     catch (error) {
         console.error('Error getting current user', error);
@@ -97,7 +97,7 @@ export async function getCurrentUser(): Promise<User | null> {
     }
 }
 
-export async function isAuthenticated(){
+export async function isAuthenticated() {
     const currentUser = await getCurrentUser();
     return !!currentUser;
 }
