@@ -1,0 +1,27 @@
+<div align="center">
+    <h1>PrepWise</h1>
+</div>
+
+<h2>Key Features:</h2>
+
+<h2>Environment Variables:</h2>
+<p>To run the project locally, you’ll need to set up the following environment variables:</p>
+
+```bash
+
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+
+FIREBASE_PROJECT_ID=
+FIREBASE_PRIVATE_KEY=
+
+GOOGLE_GENERATIVE_AI_API_KEY=
+
+NEXT_PUBLIC_VAPI_WEB_TOKEN=
+
+```
