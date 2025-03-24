@@ -1,3 +1,5 @@
+"use client";
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image'
 
@@ -10,7 +12,7 @@ enum CallStatus {
 
 const Agent = ({ userName }: AgentProps) => {
     const isSpeaking = true;
-    const callStatus = CallStatus.INACTIVE;
+    const [callStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const messages = [
         'Hello, I am Vapi, your AI interviewer. I will be conducting the interview today.',
         'Please tell me about yourself.',
