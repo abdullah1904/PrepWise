@@ -68,3 +68,4 @@ NEXT_PUBLIC_VAPI_WORKFLOW_ID=
 NEXT_PUBLIC_BASE_URL=
 
 ```
+<p>This project showcases advanced Next.js capabilities while providing a seamless, AI-driven interview preparation experience. Users can create, browse, and retake interviews with real-time feedback from AI voice agents. Feel free to explore, contribute, or use it as a reference for building AI-integrated applications!</p>
