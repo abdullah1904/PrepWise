@@ -34,7 +34,7 @@ export async function createFeedback(params: CreateFeedbackParams) {
         const formattedTranscript = transcript.map((sentence: { role: string, content: string }) => (
             `- ${sentence.role}: ${sentence.content}\n`
         )).join('');
-        const { object: {totalScore, categoryScores, strengths, areasForImprovement, finalAssessment} } = await generateObject({
+        const { object: { totalScore, categoryScores, strengths, areasForImprovement, finalAssessment } } = await generateObject({
             model: google('gemini-2.0-flash-001', {
                 structuredOutputs: false,
             }),
@@ -52,19 +52,37 @@ export async function createFeedback(params: CreateFeedbackParams) {
                     `,
             system: "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories",
         });
-        const feedback = await db.collection('feedback').add({
-            interviewId,
-            userId,
-            totalScore,
-            categoryScores,
-            strengths,
-            areasForImprovement,
-            finalAssessment,
-            createdAt: new Date().toISOString(),
-        });
-        return {
-            success: true,
-            feedbackId: feedback.id,
+        const feedbackRef = db.collection('feedback');
+        const existingFeedback = await feedbackRef.where('interviewId', '==', interviewId).where('userId', '==', userId).get();
+        if (!existingFeedback.empty) {
+            const docId = existingFeedback.docs[0].id;
+            await feedbackRef.doc(docId).update({
+                totalScore,
+                categoryScores,
+                strengths,
+                areasForImprovement,
+                finalAssessment,
+                updatedAt: new Date().toISOString(),
+            });
+            return {
+                success: true,
+                feedbackId: docId,
+            };
+        } else {
+            const feedback = await feedbackRef.add({
+                interviewId,
+                userId,
+                totalScore,
+                categoryScores,
+                strengths,
+                areasForImprovement,
+                finalAssessment,
+                createdAt: new Date().toISOString(),
+            });
+            return {
+                success: true,
+                feedbackId: feedback.id,
+            }
         }
     }
     catch (e) {
@@ -75,10 +93,10 @@ export async function createFeedback(params: CreateFeedbackParams) {
     }
 }
 
-export async function getFeedbackByInterviewId(params:GetFeedbackByInterviewIdParams): Promise<Feedback | null> {
-    const {interviewId,userId} = params;
+export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdParams): Promise<Feedback | null> {
+    const { interviewId, userId } = params;
     const feedback = await db.collection('feedback').where('interviewId', '==', interviewId).where('userId', '==', userId).limit(1).get();
-    if(feedback.empty) {
+    if (feedback.empty) {
         return null;
     }
     const feedbackDoc = feedback.docs[0];
