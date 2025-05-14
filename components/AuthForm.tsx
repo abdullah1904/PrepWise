@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/client";
 import { signIn, signUp } from "@/lib/actions/auth.action";
+import { useState } from "react";
 
 type FormType = 'sign-up' | 'sign-in'
 
@@ -31,6 +32,7 @@ type AuthFormProps = {
 const AuthForm = ({ type }: AuthFormProps) => {
     const isSignIn = type === 'sign-in'
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
     const formSchema = authFormSchema(type);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -42,6 +44,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
     })
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
+            setIsLoading(true);
             if (type == 'sign-up') {
                 const { name, email, password } = values;
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -82,6 +85,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
                 toast.error('An unknown error occurred')
             }
         }
+        finally{
+            setIsLoading(false);
+        }
     }
     return (
         <div className="card-border lg:min-w-[566px] ">
@@ -97,13 +103,13 @@ const AuthForm = ({ type }: AuthFormProps) => {
                         {!isSignIn && <FormField control={form.control} label="Name" name="name" placeholder="Your Name" />}
                         <FormField control={form.control} label="Email" name="email" placeholder="Your Email" type="email" />
                         <FormField control={form.control} label="Password" name="password" placeholder="Your Password" type="password" />
-                        <Button type="submit" className="btn">{isSignIn ? "Sign in" : "Create an Account"}</Button>
+                        <Button disabled={isLoading} type="submit" className="btn">{isSignIn ? "Sign in" : "Create an Account"}</Button>
                     </form>
                 </Form>
                 <p className="text-center">
                     {isSignIn ? "No account yet?" : "Have an account already?"}
                     <Link href={!isSignIn ? "/sign-in" : "/sign-up"} className="font-bold text-user-primary ml-1">
-                        {!isSignIn ? "Sign up" : "Sign in"}
+                        {!isSignIn ? "Sign in" : "Sign up"}
                     </Link>
                 </p>
             </div>
